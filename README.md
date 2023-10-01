@@ -7,7 +7,7 @@ The PCT2075 is a temperature-to-digital converter featuring ±1°C accuracy over
 Create a folder named PCT2075 in Arduino's libraries folder.  You will have the following folder structure:
 
 	cd arduino/libraries
-	git clone https://github.com/jpliew/PCT2075.git PCT2075
+	git clone https://github.com/brentio/PCT2075.git PCT2075
 
 ## Arduino Sketch
 
