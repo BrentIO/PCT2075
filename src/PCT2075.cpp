@@ -2,6 +2,7 @@
 
 PCT2075::PCT2075(uint8_t address) { 
 	_i2c_address = address;
+	_status = 0;
 }
 
 void PCT2075::begin(uint8_t config) {
@@ -9,14 +10,14 @@ void PCT2075::begin(uint8_t config) {
 	Wire.beginTransmission(_i2c_address); 
 	Wire.write(PCT2075_REG_CONF);
 	Wire.write(config);
-	Wire.endTransmission();
+	_status = Wire.endTransmission();
 }
 
 uint8_t PCT2075::getConfig(void) {
 	uint8_t x;
 	Wire.beginTransmission(_i2c_address); 
 	Wire.write(PCT2075_REG_CONF); 
-	Wire.endTransmission(); 
+	_status = Wire.endTransmission(); 
 	Wire.requestFrom(_i2c_address, (uint8_t)1); 
 	x = Wire.read(); 
 	return x; 
@@ -26,7 +27,7 @@ int16_t PCT2075::getTempRaw(void) {
 	int16_t temp; 
 	Wire.beginTransmission(_i2c_address); 
 	Wire.write(PCT2075_REG_TEMP);
-	Wire.endTransmission(); 
+	_status = Wire.endTransmission(); 
 	Wire.requestFrom(_i2c_address, (uint8_t)2); 
 	temp = Wire.read();
 	temp<<=8;
@@ -49,7 +50,7 @@ void PCT2075::setThyst(uint16_t threshold) {
 	Wire.write(threshold);
 	threshold>>=8;
 	Wire.write(threshold); 
-	Wire.endTransmission(); 
+	_status = Wire.endTransmission(); 
 }
 
 void PCT2075::setTos(uint16_t threshold) {
@@ -58,14 +59,14 @@ void PCT2075::setTos(uint16_t threshold) {
 	Wire.write(threshold); 
 	threshold>>=8;
 	Wire.write(threshold); 
-	Wire.endTransmission();
+	_status = Wire.endTransmission();
 }
 
 uint16_t PCT2075::getThyst(void) {
 	uint16_t x; uint16_t y; 
 	Wire.beginTransmission(_i2c_address);
 	Wire.write(PCT2075_REG_THYST); 
-	Wire.endTransmission(); 
+	_status = Wire.endTransmission(); 
 	Wire.requestFrom(_i2c_address, (uint8_t)2); 
 	x = Wire.read(); 
 	y = Wire.read(); 
@@ -80,7 +81,7 @@ uint16_t PCT2075::getTos(void) {
 	Wire.beginTransmission(_i2c_address);
 	Wire.write(PCT2075_REG_TOS); 
 	Wire.endTransmission(); 
-	Wire.requestFrom(_i2c_address, (uint8_t)2); 
+	_status = Wire.requestFrom(_i2c_address, (uint8_t)2); 
 	x = Wire.read(); 
 	y = Wire.read(); 
 	x <<= 8; 
@@ -100,7 +101,7 @@ void PCT2075::shutdown(void) {
 	Wire.beginTransmission(_i2c_address); 
 	Wire.write(PCT2075_REG_CONF);
 	Wire.write(data); 
-	Wire.endTransmission(); 
+	_status = Wire.endTransmission(); 
 }
 
 void PCT2075::normal(void) {
@@ -114,7 +115,7 @@ void PCT2075::normal(void) {
 	Wire.beginTransmission(_i2c_address);
 	Wire.write(PCT2075_REG_CONF); 
 	Wire.write(data); 
-	Wire.endTransmission(); 
+	_status = Wire.endTransmission(); 
 }
 
 bool PCT2075::isShutdown(void) {
@@ -122,7 +123,7 @@ bool PCT2075::isShutdown(void) {
 	
 	Wire.beginTransmission(_i2c_address); 
 	Wire.write(PCT2075_REG_CONF); 
-	Wire.endTransmission(); 
+	_status = Wire.endTransmission(); 
 	Wire.requestFrom(_i2c_address, (uint8_t)1);
 	state = Wire.read(); 
 	state &= 0x01;  
@@ -134,5 +135,9 @@ void PCT2075::setTidle(uint8_t time) {
 	Wire.beginTransmission(_i2c_address); 
 	Wire.write(PCT2075_REG_TIDLE); 
 	Wire.write(time);
-	Wire.endTransmission();
+	_status = Wire.endTransmission();
+}
+
+uint8_t PCT2075::i2c_error() const{
+	return _status;
 }

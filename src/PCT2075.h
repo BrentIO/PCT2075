@@ -27,6 +27,7 @@
 	class PCT2075 {
 		private: 
 			uint8_t _i2c_address;
+			uint8_t _status;
 
 		public: 
 			PCT2075(uint8_t address);
@@ -43,6 +44,7 @@
 			uint16_t getThyst(void);
 			uint16_t getTos(void);
 			uint8_t getConfig(void);
+			uint8_t i2c_error(void) const;
 	};
 	
 #endif
